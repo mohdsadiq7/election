@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>E-Voting</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="https://unpkg.com/ipfs-http-client@30.1.3/dist/index.js"></script>
+    <script src="https://bundle.run/buffer@5.2.1"></script>
+    <!-- <script type="text/javascript" src="./js/app.js"></script> -->
+    <style>
+      img.one{
+          width: 30%;
+          height: 30%;
+      }
+    </style>
+  </head>
+  <body>
+    <center>
+    <h1>Upload ID Proof Here</h1>
+
+    <input type="file" id="upload">
+    <br>
+    <br>
+    <br>
+    <div id="link"></div> <!-- markup created after upload -->
+    
+    <img class="one" src="./images/aquaman.jpg" alt="" id="sadiq">
+    <br>
+    <br>
+
+    <p id="abc">Hash Will Be Displayed Here </p>
+  <!-- <br> -->
+
+  <h2>
+  <form action="./eth.html">
+    <input id="submt" type="submit" style="display:none" value="Main page" />
+  </form>
+</h2>
+</center>
+    <script>
+        const ipfs = window.IpfsHttpClient('ipfs.infura.io', '5001', { protocol: 'https' });
+        
+        var ip_hash=''
+
+        $("#upload").on("change", function() {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+
+                const magic_array_buffer_converted_to_buffer = buffer.Buffer(reader.result); 
+                console.log(magic_array_buffer_converted_to_buffer)
+
+
+            ipfs.add(magic_array_buffer_converted_to_buffer,(error, result) => {
+              // console.log("hii")
+              var x="https://gateway.ipfs.io/ipfs/";
+              console.log('Ipfs result', result[0].hash)
+              if(error) {
+                console.error(error)
+                return
+              }
+              // console.log(result) 
+              x = x+result[0].hash;
+              localStorage.setItem("LS-1", result[0].hash);
+              console.log(x)
+              document.getElementById('sadiq').src = x;
+              document.getElementById('abc').innerHTML = result[0].hash;
+              ip_hash=result[0].hash;
+            })
+            
+            }
+            reader.readAsArrayBuffer(this.files[0]);
+            
+              $("#submt").show();
+            // console.log("hash",ip_hash)
+            
+        })
+        
+    </script>
+    
+  </body>
+</html>
